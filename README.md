@@ -2,6 +2,11 @@
 
 Blazor Movies App is a user-friendly and feature-rich web application designed for movie enthusiasts. Built with C# and Blazor, this app allows users to explore, manage, and interact with their favorite movies effortlessly.
 
+## Contributors
+- [Petar Popovic](https://github.com/PetarPoP)
+- [Josip Lovric](https://github.com/Wajperus)
+- [Zvonimir Soce](https://github.com/zsoce)
+
 ## Key Features
 
 ### User Authentication & Profiles
@@ -18,3 +23,4 @@ Blazor Movies App is a user-friendly and feature-rich web application designed f
 ### Engagement & Social Features
 - **Ratings & Reviews**: Users can rate movies and leave reviews for others to see.
 - **Comments & Discussions**: Engage in movie discussions by adding comments to movie pages.
+
