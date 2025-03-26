@@ -24,3 +24,4 @@ Blazor Movies App is a user-friendly and feature-rich web application designed f
 - **Ratings & Reviews**: Users can rate movies and leave reviews for others to see.
 - **Comments & Discussions**: Engage in movie discussions by adding comments to movie pages.
 
+![modelbaze](https://github.com/user-attachments/assets/4e696746-7485-4517-9dc0-65ac1db8fa51)
