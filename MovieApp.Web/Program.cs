@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Components.Authorization;
 using MovieApp.Application.Interfaces;
 using MovieApp.Application.Services;
 using MovieApp.Domain.Entities;
@@ -15,6 +16,10 @@ builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 
 Console.WriteLine("Starting application...");
+
+builder.Services.AddAuthorization();
+
+builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
 
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
@@ -38,6 +43,15 @@ builder.Services.AddIdentity<User, IdentityRole>(options => {
 .AddEntityFrameworkStores<MovieAppDbContext>()
 .AddDefaultTokenProviders();
 
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.Cookie.HttpOnly = true;
+    options.ExpireTimeSpan = TimeSpan.FromDays(7);
+    options.LoginPath = "/login";
+    options.LogoutPath = "/";
+    options.SlidingExpiration = true;
+});
+
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IMovieRepository, MovieRepository>();
@@ -49,7 +63,6 @@ builder.Services.AddScoped<IReviewService, ReviewService>();
 
 Console.WriteLine("Building application...");
 var app = builder.Build();
-await using (app)
 
 try {
     Console.WriteLine("Applying database migrations...");
@@ -88,5 +101,4 @@ app.MapStaticAssets();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
-app.Run();
 await app.RunAsync();

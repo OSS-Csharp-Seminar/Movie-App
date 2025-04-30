@@ -1,0 +1,129 @@
+@page "/login"
+@using Microsoft.AspNetCore.Identity
+@using MovieApp.Domain.Entities
+@using System.ComponentModel.DataAnnotations
+@inject UserManager<User> UserManager
+@inject SignInManager<User> SignInManager
+@inject NavigationManager NavigationManager
+
+<PageTitle>Login - Movie App</PageTitle>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="text-center">Login</h3>
+                </div>
+                <div class="card-body">
+                    @if (showSuccessMessage)
+                    {
+                        <div class="alert alert-success mb-3">
+                            Registration successful! You can now log in with your credentials.
+                        </div>
+                    }
+
+                    <EditForm Model="@loginModel" OnValidSubmit="HandleValidSubmit">
+                        <DataAnnotationsValidator />
+                        <ValidationSummary />
+
+                        @if (!string.IsNullOrEmpty(errorMessage))
+                        {
+                            <div class="alert alert-danger">
+                                @errorMessage
+                            </div>
+                        }
+
+                        <div class="form-group mb-3">
+                            <label for="email">Email</label>
+                            <InputText id="email" @bind-Value="loginModel.Email" class="form-control" />
+                            <ValidationMessage For="@(() => loginModel.Email)" />
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="password">Password</label>
+                            <InputText id="password" @bind-Value="loginModel.Password" class="form-control" type="password" />
+                            <ValidationMessage For="@(() => loginModel.Password)" />
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <div class="form-check">
+                                <InputCheckbox id="rememberMe" @bind-Value="loginModel.RememberMe" class="form-check-input" />
+                                <label class="form-check-label" for="rememberMe">Remember me</label>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Login</button>
+                        </div>
+                    </EditForm>
+
+                    <hr />
+                    <div class="text-center">
+                        <p>Don't have an account? <a href="register">Register</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private LoginModel loginModel = new();
+    private string errorMessage = string.Empty;
+    private bool showSuccessMessage = false;
+
+    protected override void OnInitialized()
+    {
+        var uri = new Uri(NavigationManager.Uri);
+        if (uri.Query.Contains("registered=true"))
+        {
+            showSuccessMessage = true;
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        try
+        {
+            var result = await SignInManager.PasswordSignInAsync(
+                loginModel.Email, 
+                loginModel.Password, 
+                loginModel.RememberMe, 
+                lockoutOnFailure: false);
+
+            if (result.Succeeded)
+            {
+                // Update last login time
+                var currentUser = await UserManager.FindByEmailAsync(loginModel.Email);
+                if (currentUser != null)
+                {
+                    currentUser.LastLogin = DateTime.UtcNow;
+                    await UserManager.UpdateAsync(currentUser);
+                }
+
+                NavigationManager.NavigateTo("/");
+            }
+            else
+            {
+                errorMessage = "Invalid login attempt.";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"An error occurred: {ex.Message}";
+        }
+    }
+
+    public class LoginModel
+    {
+        [Required(ErrorMessage = "Email is required")]
+        [EmailAddress(ErrorMessage = "Invalid email format")]
+        public string Email { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Password is required")]
+        public string Password { get; set; } = string.Empty;
+
+        public bool RememberMe { get; set; }
+    }
+}
