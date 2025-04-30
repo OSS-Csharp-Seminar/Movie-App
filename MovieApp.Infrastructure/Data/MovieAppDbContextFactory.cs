@@ -9,10 +9,8 @@ namespace MovieApp.Infrastructure.Data
     {
         public MovieAppDbContext CreateDbContext(string[] args)
         {
-            // Dobavljanje putanje do glavnog projekta (Web projekat)
             var basePath = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "..", "MovieApp.Web"));
             
-            // Učitavanje konfiguracije iz appsettings.json
             var configuration = new ConfigurationBuilder()
                 .SetBasePath(basePath)
                 .AddJsonFile("appsettings.json")

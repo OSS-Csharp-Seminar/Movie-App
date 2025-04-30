@@ -1,6 +1,8 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MovieApp.Application.Interfaces;
 using MovieApp.Application.Services;
+using MovieApp.Domain.Entities;
 using MovieApp.Domain.Interfaces;
 using MovieApp.Infrastructure.Data;
 using MovieApp.Infrastructure.Data.Seeding;
@@ -9,69 +11,76 @@ using MovieApp.Web.Components;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Set up console logging
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 
 Console.WriteLine("Starting application...");
 
-// Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-// Configure database
 Console.WriteLine("Configuring database...");
 builder.Services.AddDbContext<MovieAppDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Register repositories
+builder.Services.AddIdentity<User, IdentityRole>(options => {
+    options.Password.RequireDigit = true;
+    options.Password.RequireLowercase = true;
+    options.Password.RequireUppercase = true;
+    options.Password.RequireNonAlphanumeric = true;
+    options.Password.RequiredLength = 8;
+    
+    options.User.RequireUniqueEmail = true;
+    
+    options.SignIn.RequireConfirmedEmail = false;
+    options.SignIn.RequireConfirmedAccount = false;
+})
+.AddEntityFrameworkStores<MovieAppDbContext>()
+.AddDefaultTokenProviders();
+
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IMovieRepository, MovieRepository>();
 builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
 
-// Register services
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IMovieService, MovieService>();
 builder.Services.AddScoped<IReviewService, ReviewService>();
 
 Console.WriteLine("Building application...");
 var app = builder.Build();
+await using (app)
 
-// Apply migrations and seed the database in background
-Task.Run(async () => {
-    try {
-        Console.WriteLine("Applying database migrations...");
-        using (var scope = app.Services.CreateScope())
-        {
-            var services = scope.ServiceProvider;
-            var context = services.GetRequiredService<MovieAppDbContext>();
-            
-            // Primijenite migracije
-            await context.Database.MigrateAsync();
-            Console.WriteLine("Database migrations applied successfully!");
-            
-            // Seed baze podataka
-            Console.WriteLine("Seeding database...");
-            await SeedData.Initialize(services);
-            Console.WriteLine("Database seeding completed!");
-        }
+try {
+    Console.WriteLine("Applying database migrations...");
+    using (var scope = app.Services.CreateScope())
+    {
+        var services = scope.ServiceProvider;
+        var context = services.GetRequiredService<MovieAppDbContext>();
+        
+        await context.Database.MigrateAsync();
+        Console.WriteLine("Database migrations applied successfully!");
+        
+        Console.WriteLine("Seeding database...");
+        await SeedData.Initialize(services);
+        Console.WriteLine("Database seeding completed!");
     }
-    catch (Exception ex) {
-        Console.WriteLine($"Error with database initialization: {ex.Message}");
-        Console.WriteLine($"Stack trace: {ex.StackTrace}");
-    }
-});
+}
+catch (Exception ex) {
+    Console.WriteLine($"Error with database initialization: {ex.Message}");
+    Console.WriteLine($"Stack trace: {ex.StackTrace}");
+}
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.UseAntiforgery();
 
@@ -80,3 +89,4 @@ app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
 app.Run();
+await app.RunAsync();

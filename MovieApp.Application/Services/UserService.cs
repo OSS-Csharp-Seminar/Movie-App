@@ -20,7 +20,7 @@ namespace MovieApp.Application.Services
             return await _userRepository.AddAsync(user);
         }
 
-        public async Task DeleteUserAsync(int id)
+        public async Task DeleteUserAsync(string id)
         {
             await _userRepository.DeleteAsync(id);
         }
@@ -35,7 +35,7 @@ namespace MovieApp.Application.Services
             return await _userRepository.GetByEmailAsync(email);
         }
 
-        public async Task<User> GetUserByIdAsync(int id)
+        public async Task<User> GetUserByIdAsync(string id)
         {
             return await _userRepository.GetByIdAsync(id);
         }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MovieApp.Infrastructure.Repositories
 {
-    public class UserRepository : Repository<User>, IUserRepository
+    public class UserRepository : Repository<User, string>, IUserRepository
     {
         public UserRepository(MovieAppDbContext dbContext) : base(dbContext)
         {
@@ -21,7 +21,7 @@ namespace MovieApp.Infrastructure.Repositories
         public async Task<User> GetByUsernameAsync(string username)
         {
             return await _dbContext.Users
-                .FirstOrDefaultAsync(u => u.Username == username);
+                .FirstOrDefaultAsync(u => u.UserName == username);
         }
     }
 }

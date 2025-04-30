@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MovieApp.Infrastructure.Repositories
 {
-    public class Repository<T> : IRepository<T> where T : class
+    public class Repository<T, TId> : IRepository<T, TId> where T : class
     {
         protected readonly MovieAppDbContext _dbContext;
 
@@ -22,7 +22,7 @@ namespace MovieApp.Infrastructure.Repositories
             return entity;
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(TId id)
         {
             var entity = await _dbContext.Set<T>().FindAsync(id);
             if (entity != null)
@@ -37,7 +37,7 @@ namespace MovieApp.Infrastructure.Repositories
             return await _dbContext.Set<T>().ToListAsync();
         }
 
-        public async Task<T> GetByIdAsync(int id)
+        public async Task<T> GetByIdAsync(TId id)
         {
             return await _dbContext.Set<T>().FindAsync(id);
         }
@@ -46,6 +46,13 @@ namespace MovieApp.Infrastructure.Repositories
         {
             _dbContext.Set<T>().Update(entity);
             await _dbContext.SaveChangesAsync();
+        }
+    }
+
+    public class Repository<T> : Repository<T, int>, IRepository<T> where T : class
+    {
+        public Repository(MovieAppDbContext dbContext) : base(dbContext)
+        {
         }
     }
 }

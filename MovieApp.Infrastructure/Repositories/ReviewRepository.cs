@@ -23,7 +23,7 @@ namespace MovieApp.Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<Review>> GetByUserIdAsync(int userId)
+        public async Task<IEnumerable<Review>> GetByUserIdAsync(string userId)
         {
             return await _dbContext.Reviews
                 .Where(r => r.UserId == userId)

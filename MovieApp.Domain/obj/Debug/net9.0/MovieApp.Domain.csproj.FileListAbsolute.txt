@@ -10,3 +10,4 @@ C:\Users\petar\Documents\Programming\Programiranje2\programiranjeUOstromC\movie-
 C:\Users\petar\Documents\Programming\Programiranje2\programiranjeUOstromC\movie-app\MovieApp.Domain\obj\Debug\net9.0\refint\MovieApp.Domain.dll
 C:\Users\petar\Documents\Programming\Programiranje2\programiranjeUOstromC\movie-app\MovieApp.Domain\obj\Debug\net9.0\MovieApp.Domain.pdb
 C:\Users\petar\Documents\Programming\Programiranje2\programiranjeUOstromC\movie-app\MovieApp.Domain\obj\Debug\net9.0\ref\MovieApp.Domain.dll
+C:\Users\petar\Documents\Programming\Programiranje2\programiranjeUOstromC\movie-app\MovieApp.Domain\obj\Debug\net9.0\MovieApp.Domain.csproj.AssemblyReference.cache

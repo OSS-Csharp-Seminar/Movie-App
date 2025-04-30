@@ -11,7 +11,7 @@ namespace MovieApp.Application.Interfaces
         Task<Review> CreateReviewAsync(Review review);
         Task UpdateReviewAsync(Review review);
         Task DeleteReviewAsync(int id);
-        Task<IEnumerable<Review>> GetReviewsByUserIdAsync(int userId);
+        Task<IEnumerable<Review>> GetReviewsByUserIdAsync(string userId);
         Task<IEnumerable<Review>> GetReviewsByMovieIdAsync(int movieId);
     }
 }

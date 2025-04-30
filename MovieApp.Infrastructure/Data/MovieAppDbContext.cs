@@ -1,15 +1,16 @@
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using MovieApp.Domain.Entities;
 
 namespace MovieApp.Infrastructure.Data
 {
-    public class MovieAppDbContext : DbContext
+    public class MovieAppDbContext : IdentityDbContext<User>
     {
         public MovieAppDbContext(DbContextOptions<MovieAppDbContext> options) : base(options)
         {
         }
 
-        public DbSet<User> Users { get; set; }
         public DbSet<Movie> Movies { get; set; }
         public DbSet<Review> Reviews { get; set; }
         public DbSet<Comment> Comments { get; set; }
@@ -17,16 +18,16 @@ namespace MovieApp.Infrastructure.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Users configuration
+            base.OnModelCreating(modelBuilder);
+            
             modelBuilder.Entity<User>()
-                .HasIndex(u => u.Username)
+                .HasIndex(u => u.UserName)
                 .IsUnique();
 
             modelBuilder.Entity<User>()
                 .HasIndex(u => u.Email)
                 .IsUnique();
 
-            // Review relationships
             modelBuilder.Entity<Review>()
                 .HasOne(r => r.User)
                 .WithMany(u => u.Reviews)
@@ -39,7 +40,6 @@ namespace MovieApp.Infrastructure.Data
                 .HasForeignKey(r => r.MovieId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Comment relationships
             modelBuilder.Entity<Comment>()
                 .HasOne(c => c.User)
                 .WithMany(u => u.Comments)
@@ -59,7 +59,6 @@ namespace MovieApp.Infrastructure.Data
                 .OnDelete(DeleteBehavior.Restrict)
                 .IsRequired(false);
 
-            // Watchlist relationships
             modelBuilder.Entity<WatchlistItem>()
                 .HasOne(w => w.User)
                 .WithMany(u => u.WatchlistItems)

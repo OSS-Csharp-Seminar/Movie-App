@@ -40,7 +40,7 @@ namespace MovieApp.Application.Services
             return await _reviewRepository.GetByMovieIdAsync(movieId);
         }
 
-        public async Task<IEnumerable<Review>> GetReviewsByUserIdAsync(int userId)
+        public async Task<IEnumerable<Review>> GetReviewsByUserIdAsync(string userId)
         {
             return await _reviewRepository.GetByUserIdAsync(userId);
         }

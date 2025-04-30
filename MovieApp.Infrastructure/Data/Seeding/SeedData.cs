@@ -1,5 +1,5 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using MovieApp.Domain.Entities;
 using System;
 using System.Linq;
@@ -11,38 +11,65 @@ namespace MovieApp.Infrastructure.Data.Seeding
     {
         public static async Task Initialize(IServiceProvider serviceProvider)
         {
-            using var context = new MovieAppDbContext(
-                serviceProvider.GetRequiredService<Microsoft.EntityFrameworkCore.DbContextOptions<MovieAppDbContext>>());
+            using var scope = serviceProvider.CreateScope();
+            var services = scope.ServiceProvider;
+            
+            var context = services.GetRequiredService<MovieAppDbContext>();
+            var userManager = services.GetRequiredService<UserManager<User>>();
+            var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
 
-            // Check if there are already any movies
             if (context.Movies.Any())
             {
-                return; // DB has already been seeded
+                return;
             }
 
-            // Create users
+            // Seed roles
+            string[] roleNames = { "Admin", "User" };
+            foreach (var roleName in roleNames)
+            {
+                if (!await roleManager.RoleExistsAsync(roleName))
+                {
+                    await roleManager.CreateAsync(new IdentityRole(roleName));
+                }
+            }
+
+            // Seed users
             var user1 = new User
             {
-                Username = "korisnik1",
+                UserName = "korisnik1",
                 Email = "korisnik1@example.com",
-                PasswordHash = "hashed_password_1",
                 RegisterDate = DateTime.Now.AddDays(-30),
-                LastLogin = DateTime.Now.AddDays(-2)
+                LastLogin = DateTime.Now.AddDays(-2),
+                EmailConfirmed = true
             };
 
             var user2 = new User
             {
-                Username = "korisnik2",
+                UserName = "korisnik2",
                 Email = "korisnik2@example.com",
-                PasswordHash = "hashed_password_2",
                 RegisterDate = DateTime.Now.AddDays(-25),
-                LastLogin = DateTime.Now.AddDays(-1)
+                LastLogin = DateTime.Now.AddDays(-1),
+                EmailConfirmed = true
             };
 
-            context.Users.AddRange(user1, user2);
-            await context.SaveChangesAsync();
+            if (await userManager.FindByEmailAsync(user1.Email) == null)
+            {
+                var result = await userManager.CreateAsync(user1, "P@ssw0rd1");
+                if (result.Succeeded)
+                {
+                    await userManager.AddToRoleAsync(user1, "Admin");
+                }
+            }
 
-            // Create movies
+            if (await userManager.FindByEmailAsync(user2.Email) == null)
+            {
+                var result = await userManager.CreateAsync(user2, "P@ssw0rd2");
+                if (result.Succeeded)
+                {
+                    await userManager.AddToRoleAsync(user2, "User");
+                }
+            }
+
             var movie1 = new Movie
             {
                 Title = "Inception",
@@ -73,7 +100,10 @@ namespace MovieApp.Infrastructure.Data.Seeding
             context.Movies.AddRange(movie1, movie2, movie3);
             await context.SaveChangesAsync();
 
-            // Create reviews
+            // Get users from database with their generated IDs
+            user1 = await userManager.FindByEmailAsync("korisnik1@example.com");
+            user2 = await userManager.FindByEmailAsync("korisnik2@example.com");
+
             var review1 = new Review
             {
                 UserId = user1.Id,
@@ -97,19 +127,18 @@ namespace MovieApp.Infrastructure.Data.Seeding
                 UserId = user1.Id,
                 MovieId = movie2.Id,
                 Rating = 10,
-                Comment = "Bezvremenski klasik. Prica o nadi i iskupljenju koja te ne ostavlja ravnodu�nim.",
+                Comment = "Bezvremenski klasik. Prica o nadi i iskupljenju koja te ne ostavlja ravnodušnim.",
                 CreatedAt = DateTime.Now.AddDays(-10)
             };
 
             context.Reviews.AddRange(review1, review2, review3);
             await context.SaveChangesAsync();
 
-            // Create comments
             var comment1 = new Comment
             {
                 UserId = user2.Id,
                 ReviewId = review1.Id,
-                Content = "Sla�em se! Nolan je majstor svog zanata.",
+                Content = "Slažem se! Nolan je majstor svog zanata.",
                 CreatedAt = DateTime.Now.AddDays(-19)
             };
 
@@ -117,14 +146,13 @@ namespace MovieApp.Infrastructure.Data.Seeding
             {
                 UserId = user1.Id,
                 ReviewId = review2.Id,
-                Content = "Slojevi snova su bili nevjerovatno dobro obja�njeni.",
+                Content = "Slojevi snova su bili nevjerovatno dobro objašnjeni.",
                 CreatedAt = DateTime.Now.AddDays(-14)
             };
 
             context.Comments.AddRange(comment1, comment2);
             await context.SaveChangesAsync();
 
-            // Create watchlist items
             var watchlist1 = new WatchlistItem
             {
                 UserId = user1.Id,
