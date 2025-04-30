@@ -1,0 +1,13 @@
+C:\Users\petar\Documents\Programming\Programiranje2\programiranjeUOstromC\movie-app\MovieApp.Domain\bin\Debug\net9.0\MovieApp.Domain.deps.json
+C:\Users\petar\Documents\Programming\Programiranje2\programiranjeUOstromC\movie-app\MovieApp.Domain\bin\Debug\net9.0\MovieApp.Domain.dll
+C:\Users\petar\Documents\Programming\Programiranje2\programiranjeUOstromC\movie-app\MovieApp.Domain\bin\Debug\net9.0\MovieApp.Domain.pdb
+C:\Users\petar\Documents\Programming\Programiranje2\programiranjeUOstromC\movie-app\MovieApp.Domain\obj\Debug\net9.0\MovieApp.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\petar\Documents\Programming\Programiranje2\programiranjeUOstromC\movie-app\MovieApp.Domain\obj\Debug\net9.0\MovieApp.Domain.AssemblyInfoInputs.cache
+C:\Users\petar\Documents\Programming\Programiranje2\programiranjeUOstromC\movie-app\MovieApp.Domain\obj\Debug\net9.0\MovieApp.Domain.AssemblyInfo.cs
+C:\Users\petar\Documents\Programming\Programiranje2\programiranjeUOstromC\movie-app\MovieApp.Domain\obj\Debug\net9.0\MovieApp.Domain.csproj.CoreCompileInputs.cache
+C:\Users\petar\Documents\Programming\Programiranje2\programiranjeUOstromC\movie-app\MovieApp.Domain\obj\Debug\net9.0\MovieApp.Domain.sourcelink.json
+C:\Users\petar\Documents\Programming\Programiranje2\programiranjeUOstromC\movie-app\MovieApp.Domain\obj\Debug\net9.0\MovieApp.Domain.dll
+C:\Users\petar\Documents\Programming\Programiranje2\programiranjeUOstromC\movie-app\MovieApp.Domain\obj\Debug\net9.0\refint\MovieApp.Domain.dll
+C:\Users\petar\Documents\Programming\Programiranje2\programiranjeUOstromC\movie-app\MovieApp.Domain\obj\Debug\net9.0\MovieApp.Domain.pdb
+C:\Users\petar\Documents\Programming\Programiranje2\programiranjeUOstromC\movie-app\MovieApp.Domain\obj\Debug\net9.0\ref\MovieApp.Domain.dll
+C:\Users\petar\Documents\Programming\Programiranje2\programiranjeUOstromC\movie-app\MovieApp.Domain\obj\Debug\net9.0\MovieApp.Domain.csproj.AssemblyReference.cache
